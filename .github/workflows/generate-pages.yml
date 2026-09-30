@@ -6,7 +6,10 @@ on:
     branches: [main]
     paths:
       - data/pages.csv
+      - data/**/*.json
       - generate.py
+      - render_template.py
+      - template.md
       - .github/workflows/generate-pages.yml
 
 permissions:
@@ -25,7 +28,9 @@ jobs:
           python-version: '3.13'
 
       - name: Generate Markdown pages
-        run: python generate.py --input data/pages.csv --output generated
+        run: |
+          python generate.py --input data/pages.csv --output generated
+          python render_template.py --template template.md --site data/site.json --jobs data/render-jobs.json --output generated
 
       - name: Commit generated pages
         run: |
