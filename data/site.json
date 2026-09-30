@@ -1,0 +1,5 @@
+{
+  "SITE_NAME": "批量页面生成器",
+  "ARTICLE_TEMPLATE": "template.md",
+  "FOOTER": "本文依据已审核的数据生成；如需更新，请以原始资料为准。"
+}
