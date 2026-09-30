@@ -1,50 +1,69 @@
-# 鎵归噺椤甸潰鐢熸垚鍣?
-灏嗕綘瀵煎叆鐨?CSV 鎴?JSON 椤甸潰鏁版嵁娓叉煋涓虹嫭绔?Markdown 椤甸潰銆傛瘡鏉¤褰曞繀椤绘彁渚涚湡瀹炪€佸彲鏍搁獙涓斾笌涓婚鐩稿叧鐨勫唴瀹癸紱宸ュ叿涓嶄娇鐢ㄩ殣钘忛摼鎺ャ€佸叧閿瘝鍫嗙爩鎴栧叾浠栬閬挎悳绱㈠紩鎿庤鍒欑殑鏈哄埗銆?
-## GitHub 鑷姩鐢熸垚
+# 批量页面生成器
 
-鐢熶骇鏁版嵁鏂囦欢鏄?`data/pages.csv`銆傚皢瀹冩彁浜ゅ埌 GitHub 鐨?`main` 鍒嗘敮鍚庯紝`.github/workflows/generate-pages.yml` 浼氳嚜鍔ㄨ繍琛?Python銆佺敓鎴?`generated/` 涓殑 Markdown 椤甸潰骞舵妸鍙樺寲鎻愪氦鍥炰粨搴撱€?
-棣栨浣跨敤鍓嶏紝鍦ㄤ粨搴撶殑 **Settings 鈫?Actions 鈫?General 鈫?Workflow permissions** 閫夋嫨 **Read and write permissions**锛屼互鍏佽宸ヤ綔娴佹彁浜ょ敓鎴愮粨鏋溿€?
-## 蹇€熷紑濮?
+将你导入的 CSV 或 JSON 页面数据渲染为独立 Markdown 页面。每条记录必须提供真实、可核验且与主题相关的内容；工具不使用隐藏链接、关键词堆砌或其他规避搜索引擎规则的机制。
+
+## GitHub 自动生成
+
+生产数据文件是 `data/pages.csv`。将它提交到 GitHub 的 `main` 分支后，`.github/workflows/generate-pages.yml` 会自动运行 Python、生成 `generated/` 中的 Markdown 页面并把变化提交回仓库。
+
+首次使用前，在仓库的 **Settings → Actions → General → Workflow permissions** 选择 **Read and write permissions**，以允许工作流提交生成结果。
+
+## 快速开始
+
 ```powershell
 py generate.py --input data/pages.sample.csv --output generated
 ```
 
-杈撳嚭椤甸潰浣嶄簬 `generated/YYYY/MM/slug.md`锛屽悓鏃朵細鐢熸垚 `generated/manifest.json`銆?
-## CSV 瀛楁
+输出页面位于 `generated/YYYY/MM/slug.md`，同时会生成 `generated/manifest.json`。
 
-蹇呭～锛歚title`銆乣keyword`銆乣summary`銆乣body`銆?
-鍙€夊瓧娈碉細
+## CSV 字段
 
-| 瀛楁 | 浣滅敤 |
+必填：`title`、`keyword`、`summary`、`body`。
+
+可选字段：
+
+| 字段 | 作用 |
 |---|---|
-| `style` | `guide`銆乣overview` 鎴?`update`锛屽喅瀹氶〉闈㈠竷灞€銆?|
-| `source_id` | 鏁版嵁婧愪腑鐨勬案涔呭敮涓€ ID锛涚敤浜庤瘑鍒悓涓€鏉″唴瀹圭殑鏇存柊锛屽己鐑堝缓璁彁渚涖€?|
-| `slug` | URL/鏂囦欢鍚嶏紱鐪佺暐鏃舵牴鎹爣棰樼敓鎴愩€?|
-| `published_at`銆乣updated_at` | ISO 8601 鏃堕棿锛涚渷鐣ユ椂浣跨敤褰撳墠 UTC 鏃堕棿銆?|
-| `image` | 鍥剧墖 HTTPS URL銆?|
-| `source_url` | 鍘熷鎴栧畼鏂硅祫鏂?HTTPS URL銆?|
-| `cta_label`銆乣cta_url` | 椤甸潰搴曢儴琛屽姩閾炬帴銆?|
-| `markers` | 閫楀彿鍒嗛殧鐨勬爣绛炬垨瑕佺偣銆?|
-| `news_json` | JSON 鏁扮粍锛屽 `[{"title":"璧勮鏍囬","url":"https://...","summary":"鎽樿"}]`銆?|
-| `related_json` | JSON 鏁扮粍锛屾牸寮忓悓 `news_json`锛岀敤浜庣珯鍐呯浉鍏虫帹鑽愩€?|
+| `style` | `guide`、`overview` 或 `update`，决定页面布局。 |
+| `source_id` | 数据源中的永久唯一 ID；用于识别同一条内容的更新，强烈建议提供。 |
+| `slug` | URL/文件名；省略时根据标题生成。 |
+| `published_at`、`updated_at` | ISO 8601 时间；省略时使用当前 UTC 时间。 |
+| `image` | 图片 HTTPS URL。 |
+| `source_url` | 原始或官方资料 HTTPS URL。 |
+| `cta_label`、`cta_url` | 页面底部行动链接。 |
+| `markers` | 逗号分隔的标签或要点。 |
+| `news_json` | JSON 数组，如 `[{"title":"资讯标题","url":"https://...","summary":"摘要"}]`。 |
+| `related_json` | JSON 数组，格式同 `news_json`，用于站内相关推荐。 |
 
-JSON 瀵煎叆鏃讹紝鏂囦欢椤跺眰鏄〉闈㈠璞℃暟缁勶紝瀛楁鍚嶇浉鍚岋紱`news_json` 涓?`related_json` 鍙互鐩存帴濉啓鏁扮粍銆?
-## 瀵煎叆浣犵殑鏁版嵁
+JSON 导入时，文件顶层是页面对象数组，字段名相同；`news_json` 与 `related_json` 可以直接填写数组。
 
-澶嶅埗 `data/pages.sample.csv` 涓烘柊鐨?CSV锛屾浛鎹㈠叾涓暟鎹悗鎵ц锛?
+## 导入你的数据
+
+复制 `data/pages.sample.csv` 为新的 CSV，替换其中数据后执行：
+
 ```powershell
 py generate.py --input data/your-pages.csv --output generated
 ```
 
-绀轰緥 CSV 宸蹭娇鐢?UTF-8 BOM 缂栫爜锛屽彲鐩存帴鐢?Excel 鎵撳紑銆傜敤 Excel 淇濆瓨鑷繁鐨勬枃浠舵椂锛岃閫夋嫨鈥淐SV UTF-8锛堥€楀彿鍒嗛殧锛夆€濓紝鍚﹀垯涓枃鍙兘鏄剧ず涔辩爜銆?
-鐢熸垚鍣ㄤ細鎷掔粷锛氱己澶卞繀濉瓧娈点€侀噸澶?slug銆侀潪 HTTP(S) 閾炬帴銆侀敊璇殑 JSON 鏁扮粍瀛楁銆?
-## 闃查噸澶嶇瓥鐣?
-姣忔杩愯閮戒細璇诲彇 `generated/manifest.json`锛?
-- 鐩稿悓 `source_id` 涓斿唴瀹规湭鍙橈細璺宠繃锛?- 鐩稿悓 `source_id` 浣嗗唴瀹瑰彉鍖栵細鍘熻矾寰勬洿鏂帮紝涓嶆柊寤虹浜岄〉锛?- 涓嶅悓 `source_id` 浣嗗唴瀹规寚绾规垨鏍囬鐩稿悓锛氳烦杩囬噸澶嶉〉锛?- 鍚屼竴浠藉鍏ユ暟鎹唴閲嶅鐨?`source_id`銆佹爣棰樻垨鍐呭锛氬彧淇濈暀棣栨潯銆?
-鍐呭鎸囩汗鍩轰簬鍏抽敭璇嶃€佹憳瑕併€佹鏂囥€佸浘鐗囥€佹潵婧愩€丆TA銆佹爣绛俱€佺浉鍏虫柊闂诲拰鐩稿叧鎺ㄨ崘璁＄畻銆傚畠妫€娴嬬殑鏄畬鍏ㄧ浉鍚岀殑鍐呭锛涚浉杩戜絾涓嶅悓鐨勬枃绔犱粛闇€鐢卞鍏ユ暟鎹拰浜哄伐瀹℃牳淇濊瘉璐ㄩ噺銆?
-姝ゅ锛屾墍鏈夋柊椤甸潰蹇呴』涓庡唴瀹瑰簱涓凡鏈夐〉闈㈣嚦灏戞湁 **50% 鍐呭宸紓**銆傚樊寮傝绠楀彧浣跨敤椤甸潰鏍囬銆佸叧閿瘝銆佹憳瑕併€佹鏂囥€佹爣绛俱€佺浉鍏宠祫璁拰鐩稿叧鎺ㄨ崘锛屼笉浼氬洜涓烘ā鏉夸腑鐨勫浐瀹氭爣棰樻垨椤佃剼鑰岃鍒ゃ€傚樊寮備笉瓒?50% 鐨勬柊椤甸潰浼氳璺宠繃锛涘悓涓€ `source_id` 鐨勫凡鏈夐〉闈粛浼氬師浣嶆洿鏂般€?
-榛樿闃堝€兼槸 `0.50`锛屽彲鎻愰珮瑕佹眰锛屼緥濡傝嚦灏?70% 涓嶅悓锛?
+示例 CSV 已使用 UTF-8 BOM 编码，可直接用 Excel 打开。用 Excel 保存自己的文件时，请选择“CSV UTF-8（逗号分隔）”，否则中文可能显示乱码。
+
+生成器会拒绝：缺失必填字段、重复 slug、非 HTTP(S) 链接、错误的 JSON 数组字段。
+
+## 防重复策略
+
+每次运行都会读取 `generated/manifest.json`：
+
+- 相同 `source_id` 且内容未变：跳过；
+- 相同 `source_id` 但内容变化：原路径更新，不新建第二页；
+- 不同 `source_id` 但内容指纹或标题相同：跳过重复页；
+- 同一份导入数据内重复的 `source_id`、标题或内容：只保留首条。
+
+内容指纹基于关键词、摘要、正文、图片、来源、CTA、标签、相关新闻和相关推荐计算。它检测的是完全相同的内容；相近但不同的文章仍需由导入数据和人工审核保证质量。
+
+此外，所有新页面必须与内容库中已有页面至少有 **50% 内容差异**。差异计算只使用页面标题、关键词、摘要、正文、标签、相关资讯和相关推荐，不会因为模板中的固定标题或页脚而误判。差异不足 50% 的新页面会被跳过；同一 `source_id` 的已有页面仍会原位更新。
+
+默认阈值是 `0.50`，可提高要求，例如至少 70% 不同：
+
 ```powershell
 py generate.py --input data/your-pages.csv --output generated --min-difference 0.70
 ```
-
