@@ -4,7 +4,7 @@
 
 ## GitHub 自动生成
 
-生产数据文件是 `data/pages.csv`。将它提交到 GitHub 的 `main` 分支后，`.github/workflows/generate-pages.yml` 会自动运行 Python、生成 `generated/` 中的 Markdown 页面并把变化提交回仓库。
+CSV 生产数据文件是 `data/pages.csv`。三级模板页面由 `data/site.json`、`data/batches/*.json`、单页 JSON 和 `data/render-jobs.json` 组合。将它们提交到 GitHub 的 `main` 分支后，`.github/workflows/generate-pages.yml` 会自动运行 Python、生成 `generated/` 中的 Markdown 页面并把变化提交回仓库。
 
 首次使用前，在仓库的 **Settings → Actions → General → Workflow permissions** 选择 **Read and write permissions**，以允许工作流提交生成结果。
 
